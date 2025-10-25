@@ -73,7 +73,7 @@ export const rewards: Reward[] = [
     name: 'Ecobag GF',
     description: 'Sacola ecológica exclusiva do programa.',
     pointsRequired: 250,
-    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=480&q=80'
+    imageUrl: '/images/itens/ecobag.png'
   },
   {
     id: 'reward-002',
@@ -87,7 +87,7 @@ export const rewards: Reward[] = [
     name: 'Camiseta GF',
     description: 'Camiseta oficial para vestir a causa.',
     pointsRequired: 450,
-    imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=480&q=80'
+    imageUrl: '/images/itens/camiseta.png'
   },
   {
     id: 'reward-004',
