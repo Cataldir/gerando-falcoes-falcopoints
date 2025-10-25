@@ -37,7 +37,7 @@ export const campaigns: Campaign[] = [
     id: 'camp-001',
     name: 'Expedição Favela 3D',
     description: 'Ajude a transformar moradias e garantir saneamento para 150 famílias.',
-    imageUrl: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/images/slider/slider-1.png',
     goal: 50000,
     raised: 34750
   },
@@ -45,7 +45,7 @@ export const campaigns: Campaign[] = [
     id: 'camp-002',
     name: 'Educação voa alto',
     description: 'Crie bolsas de estudo para jovens da periferia conectarem-se com tecnologia.',
-    imageUrl: 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/images/slider/slider-2.png',
     goal: 30000,
     raised: 21400
   },
@@ -53,7 +53,7 @@ export const campaigns: Campaign[] = [
     id: 'camp-003',
     name: 'Natal Solidário',
     description: 'Garanta cestas natalinas completas para famílias atendidas pelo FalcoPoints.',
-    imageUrl: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80',
+    imageUrl: '/images/slider/slider-3.png',
     goal: 40000,
     raised: 15280
   }
@@ -77,10 +77,10 @@ export const rewards: Reward[] = [
   },
   {
     id: 'reward-002',
-    name: 'Destaque no Ranking',
-    description: 'Seu nome em destaque por uma semana.',
+    name: 'Jantar com a Embaixadora',
+    description: 'Compartilhe momentos com nossa embaixadora Tais Araujo.',
     pointsRequired: 350,
-    imageUrl: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=480&q=80'
+    imageUrl: '/images/pessoas/tais.png'
   },
   {
     id: 'reward-003',
@@ -91,10 +91,10 @@ export const rewards: Reward[] = [
   },
   {
     id: 'reward-004',
-    name: 'Almoço com Embaixadora',
-    description: 'Experiência exclusiva com líderes GF.',
+    name: 'Almoço com a Embaixadora',
+    description: 'Experiência exclusiva com nossa Embaixadora Sabrina!',
     pointsRequired: 950,
-    imageUrl: 'https://images.unsplash.com/photo-1555992336-cbf15f3f09f1?auto=format&fit=crop&w=480&q=80'
+    imageUrl: '/images/pessoas/sabrina.png'
   },
   {
     id: 'reward-005',
