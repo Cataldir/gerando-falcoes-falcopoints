@@ -1,0 +1,96 @@
+[project]
+name = "maf-sk-context-samples"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Ricardo Cataldi",email = "rcataldi@microsoft.com"}
+]
+
+readme = "README.md"
+requires-python = ">=3.13, <4.0"
+
+dependencies = [
+    "agent-framework>=1.0.0b251016",
+    "azure-ai-projects>=1.1.0b4",
+    "azure-identity>=1.25.1",
+    "fastapi>=0.119.1",
+    "fastapi-mcp>=0.4.0",
+    "pydantic",
+    "semantic-kernel>=1.35.3,<2.0.0",
+    "python-dotenv",
+    "uvicorn>=0.38.0",
+]
+
+[project.urls]
+repository = "https://github.com/Azure-Samples/maf-sk-context-migration"
+
+[project.optional-dependencies]
+dev = [
+    "faker",
+    "pre-commit",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-asyncio",
+]
+lint = [
+    "pylint",
+    "isort",
+    "black[jupyter]>=25.1.0,<26.0.0",
+]
+docs = [
+    "mkdocs",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["*"]
+namespaces = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q -s"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "async: marks tests as async (select with '-m async')",
+    "slow: marks tests as slow (select with '-m slow')"
+]
+
+[tool.pylint]
+fail-under = 8.5
+max-line-length = 100
+max-complexity = 10
+good-names = ["i", "j", "k", "ex", "Run", "_"]
+disable = [
+    "C0114", "C0115", "C0116", "C0301",  # Docstrings & Line Length Warnings
+    "W3101",  # `confusing-with-statement` (False Positive)
+    "E0401"  # `import-error` (Fixes false positives on local imports)
+]
+load-plugins = [
+    "pylint.extensions.mccabe",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312', 'py313']  # Explicit Python 3.13 support
+include = '\.pyi?$'
+exclude = '\.git|\.hg|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+line_length = 100
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
