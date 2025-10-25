@@ -79,7 +79,7 @@ export const rewards: Reward[] = [
     id: 'reward-002',
     name: 'Jantar com a Embaixadora',
     description: 'Compartilhe momentos com nossa embaixadora Tais Araujo.',
-    pointsRequired: 350,
+    pointsRequired: 3500,
     imageUrl: '/images/pessoas/tais.png'
   },
   {
@@ -93,15 +93,8 @@ export const rewards: Reward[] = [
     id: 'reward-004',
     name: 'Almoço com a Embaixadora',
     description: 'Experiência exclusiva com nossa Embaixadora Sabrina!',
-    pointsRequired: 950,
+    pointsRequired: 3250,
     imageUrl: '/images/pessoas/sabrina.png'
-  },
-  {
-    id: 'reward-005',
-    name: 'Conversa 1:1 - Depoimentos',
-    description: 'Encontro com beneficiária(o) para ouvir histórias.',
-    pointsRequired: 650,
-    imageUrl: 'https://images.unsplash.com/photo-1530023367847-a683933f4177?auto=format&fit=crop&w=480&q=80'
   }
 ];
 
