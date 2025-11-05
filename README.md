@@ -1,53 +1,173 @@
-# code-evaluator
+# FalcoPoints Frontend
 
-Full-stack platform for orchestrating code-quality evaluations across GitHub repositories.
+Interface web do programa de fidelidade **FalcoPoints**, focada em acompanhar pontos, missões, prêmios e o relacionamento das pessoas doadoras com campanhas sociais. O projeto é construído com **Next.js 14 (App Router)**, **TypeScript** e **Tailwind CSS**, organizando os componentes em uma estrutura _atomic design_.
 
-## Project layout
+## Visão geral do app
 
-- `src/backend/`: FastAPI backend integrated with Azure Cosmos DB and Azure AI Foundry agents.
-- `src/frontend/`: Next.js 14 UI (App Router) with Tailwind CSS and an atomic component structure.
+- **Design system consistente** com paleta azul/laranja da marca, tipografia customizada e componentes reutilizáveis.
+- **Dashboard inicial** com estatísticas, carrossel de campanhas (React Slick) e histórico emergente.
+- **Missões e badges** integradas, com modal detalhando requisitos, missões relacionadas e botões de compartilhamento social.
+- **Formulário de contribuição** com geração de link de indicação e cópia rápida para o clipboard.
+- **Catálogo de prêmios** com verificação de saldo, cálculo automático pós-resgate e confirmação em modal.
+- **Perfil do doador** com glow dinâmico no avatar, formulário de dados, histórico de badges e modal de compartilhamento.
+- **Botão flutuante do Copilot** presente em todas as páginas via `PageShell`, abrindo um webchat incorporado em modal.
 
-## Backend (FastAPI + uv)
+## Estrutura de pastas relevante
 
-1. Install [uv](https://github.com/astral-sh/uv) and Python 3.13.
-1. Copy `src/backend/.env` and adjust the values for your environment:
+- `src/frontend/app/` – rotas do App Router (Home, Contribua Agora, Missões, Catálogo, Perfil).
+- `src/frontend/components/` – componentes organizados em _atoms_, _molecules_, _organisms_ e _templates_.
+- `src/frontend/utilities/` – dados mockados, helpers de formatação, links de compartilhamento e geração de convites.
+- `src/frontend/types/` – contratos TypeScript para campanhas, missões, badges, recompensas e usuários.
+- `src/backend/` – pasta reservada para evolução futura do backend (a implementação atual é focada no frontend).
 
-```env
-COSMOS_ENDPOINT=... # Cosmos DB SQL endpoint
-COSMOS_DATABASE=code-evaluator
-COSMOS_CHALLENGES_CONTAINER=challenges
-COSMOS_CRITERIA_CONTAINER=criteria
-COSMOS_REPOSITORIES_CONTAINER=repositories
-COSMOS_EVALUATIONS_CONTAINER=evaluations
-AZURE_AI_ENDPOINT=...
-AZURE_AI_PROJECT_NAME=code-evaluator-project
-AZURE_AI_AGENT_NAME=code-quality-agent
-GITHUB_TOKEN=... # optional, improves GitHub rate limits
+## Páginas e fluxos
+
+| Rota | Conteúdo principal | Destaques de UX |
+| --- | --- | --- |
+| `/` | Painel com cards de estatísticas e `CampaignSlider` | Modal de histórico com `HistoryList`, CTA “Contribua agora”, carrossel com ícones e gradientes |
+| `/contribua-agora` | Formulário de doação recorrente/pontual | Geração de link de indicação, cópia com feedback, mensagens contextuais |
+| `/missoes` | Vitrine de badges e missões agrupadas | Cartões compactos, modal com ícone/color badge, lista de missões, botões de share (Facebook/LinkedIn) |
+| `/catalogo-de-premios` | Grid de recompensas resgatáveis | Modal confirmações com cálculo de saldo, cards destacando foto e custo em pontos |
+| `/perfil` | Perfil completo do doador | Avatar com glow por nível, formulário `ProfileForm`, vitrine de badges recentes e modal de compartilhamento |
+
+## Estratégias de implementação
+
+- **Atomic design**: `atoms` (botões, campos, avatar), `molecules` (cards, listas), `organisms` (forms, sliders, sidebar) e `templates` (PageShell) garantem reuso e consistência.
+- **Dados mockados** em `utilities/mockData.ts` centralizam campanhas, missões, badges, níveis e recompensas; facilitam troca futura por chamadas de API.
+- **Estado local**: fluxos simples usam `useState` nos próprios componentes das páginas; dados derivados (ex.: missões por badge) são calculados dinamicamente.
+- **Estilização**: Tailwind com extensões de tema (cores, fontes, sombras) em `tailwind.config.ts`. Classes utilitárias garantem responsividade.
+- **Acessibilidade**: botões possuem `aria-label`, textos alternativos e `sr-only` para ícones; controles são tecláveis.
+- **Interação social**: utilitários `getFacebookShareLink` e `getLinkedInShareLink` constroem URLs parametrizadas de forma segura.
+- **Integração Copilot**: `PageShell` adiciona botão flutuante com ícone `public/images/copilot.png` e modal contendo iframe do Copilot Studio.
+
+## Executando localmente
+
+1. Instale o **Node.js 20+** e **Yarn 1.22+**.
+2. Instale as dependências do frontend:
+
+    ```powershell
+    cd src/frontend
+    yarn install
+    ```
+
+3. Rode em modo desenvolvimento:
+
+    ```powershell
+    yarn dev
+    ```
+
+4. Build de produção e lint opcionais:
+
+    ```powershell
+    yarn build
+    yarn lint
+    ```
+
+> **Env vars**: crie `src/frontend/.env.local` se precisar configurar chaves como `NEXT_PUBLIC_API_BASE_URL`. O app atual opera com dados mockados.
+
+## Deploy e CI/CD
+
+- O fluxo de deploy usa **Azure Static Web Apps** via GitHub Actions (`.github/workflows/azure-static-web-apps-agreeable-moss-000d6ac1e.yml`).
+- O workflow roda `yarn build` na pasta `src/frontend` e publica a pasta `.next` como artefato.
+- Certifique-se de configurar o segredo `AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_MOSS_000D6AC1E` no repositório.
+
+## Bicep – Static Web Apps para o frontend
+
+O arquivo `infra/falcopoints-swa.bicep` provisiona o Static Web App com identidade gerenciada e reutiliza o workflow de GitHub Actions existente. Os principais parâmetros ficam expostos para personalização (nome, branch, diretórios do build, tags etc.). Certifique-se de trafegar o token do GitHub como secret (Key Vault, variável protegida, ou arquivo local referenciado por `@`).
+
+```bicep
+targetScope = 'resourceGroup'
+
+@description('Nome do Azure Static Web App.')
+param staticSiteName string
+
+@description('Região do recurso. Por padrão herda a região do resource group.')
+param location string = resourceGroup().location
+
+@description('SKU do Static Web App.')
+@allowed([
+  'Free'
+  'Standard'
+])
+param skuName string = 'Standard'
+
+@description('URL do repositório GitHub monitorado pelo build.')
+param repositoryUrl string
+
+@description('Branch do repositório associada ao build automatizado.')
+param branch string = 'main'
+
+@secure()
+@description('GitHub token com escopo repo. Armazene-o em segredo seguro (ex.: Azure Key Vault).')
+param githubToken string
+
+@description('Diretório com o frontend Next.js a ser publicado.')
+param appLocation string = 'src/frontend'
+
+@description('Diretório com o artefato gerado pelo build do Next.js.')
+param appArtifactLocation string = '.next'
+
+@description('Mapa opcional de tags para governança.')
+param tags object = {}
+
+resource staticApp 'Microsoft.Web/staticSites@2023-07-01' = {
+  name: staticSiteName
+  location: location
+  identity: {
+    type: 'SystemAssigned' // Garante integração segura com outros serviços Azure via RBAC.
+  }
+  sku: {
+    name: skuName
+    tier: skuName == 'Free' ? 'Free' : 'Standard'
+  }
+  properties: {
+    repositoryUrl: repositoryUrl
+    branch: branch
+    repositoryToken: githubToken
+    allowConfigFileUpdates: false // Mantém configuração controlada pelo repositório.
+    skipGithubActionWorkflowGeneration: true // Já existe workflow dedicado no repositório.
+    buildProperties: {
+      appLocation: appLocation
+      apiLocation: ''
+      appArtifactLocation: appArtifactLocation
+    }
+  }
+  tags: tags
+}
+
+output staticWebAppHostname string = staticApp.properties.defaultHostname
 ```
 
-1. Install dependencies and run the API:
+### Como executar a infraestrutura
 
 ```powershell
-cd src/backend
-uv sync --all-extras --dev
-uv run uvicorn app.main:app --reload
+# 1. Criar (ou reutilizar) o resource group
+az group create --name rg-falcopoints --location brazilsouth
+
+# 2. Validar alterações com what-if
+az deployment group what-if `
+  --resource-group rg-falcopoints `
+  --template-file infra/falcopoints-swa.bicep `
+  --parameters staticSiteName='falco-points-swa' repositoryUrl='https://github.com/Cataldir/gerando-falcoes-falcopoints'
+
+# 3. Aplicar o template
+az deployment group create `
+  --resource-group rg-falcopoints `
+  --template-file infra/falcopoints-swa.bicep `
+  --parameters staticSiteName='falco-points-swa' repositoryUrl='https://github.com/Cataldir/gerando-falcoes-falcopoints' githubToken=@token.txt
 ```
 
-## Frontend (Next.js + Tailwind)
+- Substitua `githubToken=@token.txt` por uma referência segura (Key Vault ou `--parameters githubToken='[valor]'` via pipeline protegido).
+- Ajuste `appLocation`, `appArtifactLocation` e `tags` conforme sua estrutura caso diverja do padrão.
+- Após o provisionamento inicial, valide no portal se o Static Web App associou o repositório corretamente e atualize o token do workflow quando necessário.
 
-1. Install Node.js 20+.
-1. Install dependencies and start the dev server:
+## Próximos passos sugeridos
 
-```powershell
-cd src/frontend
-npm install
-npm run dev
-```
+- Integrar o backend definitivo e substituir os mocks por chamadas autenticadas.
+- Adicionar testes de unidade para utilitários (formatação, links de compartilhamento, geração de convites).
+- Criar testes e2e (Playwright/Cypress) para fluxos críticos: geração de link, resgate de prêmio, navegação entre campanhas.
+- Monitorar métricas de uso (Azure Application Insights) e eventos de conversão de missões.
 
-1. Ensure `NEXT_PUBLIC_API_BASE_URL` points to the backend (create `.env.local` in `src/frontend` if needed).
+---
 
-## Key features
-
-- Challenge management with dynamic evaluation criteria and repository mapping.
-- Live ranking dashboard polling the backend for evaluation progress.
-- Azure AI agent integration using repository snapshots (download + unzip) during evaluations.
+Qualquer dúvida ou sugestão, fique à vontade para abrir uma issue ou PR. Bons voos com o FalcoPoints! ✈️
